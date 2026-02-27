@@ -377,6 +377,11 @@
 
           <div class="section-label">installed games</div>
 
+          <div id="platformMissingNote" class="empty-message" style="display:none; margin-bottom: 12px;">
+            zeroSignal Platform not detected —
+            <span style="color: var(--accent); cursor: pointer;" onclick="switchToDiscover()">download here</span>
+          </div>
+
           <section class="cards">
             <p class="empty-message">No games installed.</p>
           </section>
@@ -388,6 +393,22 @@
             <div class="main-title">discover games</div>
             <p class="main-subtitle">Browse new offline‑ready games. Launch instantly or download to your library.</p>
           </header>
+
+          <div class="section-label">zeroSignal platform</div>
+
+          <section class="cards" style="margin-bottom: 20px;">
+            <article class="card discover-card" style="padding: 14px;">
+              <div class="card-title">zeroSignal Platform</div>
+              <div class="card-desc">Download the offline launcher for your installed games.</div>
+
+              <div id="platformUpdateNote" style="display:none; margin: 8px 0; color: var(--accent2); font-size: 0.8rem;"></div>
+
+              <div style="display: flex; gap: 8px; margin-top: 10px;">
+                <select id="platformVersionDropdown" class="btn-secondary" style="flex: 1; padding: 6px 10px; cursor: pointer;"></select>
+                <button id="platformDownloadBtn" class="btn" style="flex: 1;">download latest</button>
+              </div>
+            </article>
+          </section>
 
           <div class="section-label">available games</div>
 
@@ -401,7 +422,7 @@
   </div>
 
   <script>
-    // Simple page switching for website version
+    // Page switching
     document.querySelectorAll(".nav-item").forEach(item => {
       item.addEventListener("click", () => {
         document.querySelectorAll(".nav-item").forEach(i => i.classList.remove("active"));
@@ -412,7 +433,69 @@
         document.getElementById(page).classList.add("active");
       });
     });
+
+    function switchToDiscover() {
+      document.querySelector('[data-page="discover"]').click();
+    }
+
+    // Detect platform installation (your platform will set this later)
+    const installedVersion = localStorage.getItem("zeroSignalVersion");
+    const platformInstalled = localStorage.getItem("zeroSignalInstalled");
+
+    if (!platformInstalled) {
+      document.getElementById("platformMissingNote").style.display = "block";
+    }
+
+    // Load GitHub Releases
+    async function loadPlatformReleases() {
+      try {
+        const res = await fetch("https://api.github.com/repos/warblingGerbil/zeroSignal/releases");
+        const releases = await res.json();
+
+        if (!Array.isArray(releases) || releases.length === 0) return;
+
+        // Sort newest → oldest
+        releases.sort((a, b) => new Date(b.published_at) - new Date(a.published_at));
+
+        const latest = releases[0];
+        const dropdown = document.getElementById("platformVersionDropdown");
+        const downloadBtn = document.getElementById("platformDownloadBtn");
+        const updateNote = document.getElementById("platformUpdateNote");
+
+        // Populate dropdown
+        releases.forEach(r => {
+          const asset = r.assets.find(a => a.name.endsWith(".exe"));
+          if (!asset) return;
+
+          const opt = document.createElement("option");
+          opt.value = asset.browser_download_url;
+          opt.textContent = r.tag_name;
+          dropdown.appendChild(opt);
+        });
+
+        // Default download button → latest release
+        const latestAsset = latest.assets.find(a => a.name.endsWith(".exe"));
+        downloadBtn.onclick = () => {
+          window.location.href = latestAsset.browser_download_url;
+        };
+
+        // Dropdown download
+        dropdown.addEventListener("change", () => {
+          window.location.href = dropdown.value;
+        });
+
+        // Update detection
+        if (installedVersion && installedVersion !== latest.tag_name) {
+          updateNote.textContent = `update available: ${latest.tag_name}`;
+          updateNote.style.display = "block";
+        }
+
+      } catch (err) {
+        console.error("Failed to load releases:", err);
+      }
+    }
+
+    loadPlatformReleases();
   </script>
 
 </body>
-</html>
