@@ -16,11 +16,7 @@
       --text-muted: #888;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -51,9 +47,7 @@
       border-radius: 18px;
       background: linear-gradient(135deg, rgba(0, 255, 136, 0.08), rgba(0, 229, 255, 0.04));
       padding: 1px;
-      box-shadow:
-        0 0 25px rgba(0, 0, 0, 0.9),
-        0 0 40px rgba(0, 255, 136, 0.25);
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.9), 0 0 40px rgba(0, 255, 136, 0.25);
     }
 
     .app-inner {
@@ -74,19 +68,14 @@
       box-shadow: 0 0 18px rgba(0, 0, 0, 0.8);
     }
 
-    .logo {
-      position: relative;
-      margin-bottom: 18px;
-    }
+    .logo { position: relative; margin-bottom: 18px; }
 
     .logo-text {
       font-size: 1.3rem;
       letter-spacing: 0.12em;
       text-transform: uppercase;
       color: var(--accent);
-      text-shadow:
-        0 0 8px rgba(0, 255, 136, 0.8),
-        0 0 18px rgba(0, 229, 255, 0.5);
+      text-shadow: 0 0 8px rgba(0, 255, 136, 0.8), 0 0 18px rgba(0, 229, 255, 0.5);
     }
 
     .logo-glitch {
@@ -125,69 +114,9 @@
       color: var(--text-muted);
     }
 
-    .signal-bars {
-      display: flex;
-      gap: 3px;
-      align-items: flex-end;
-    }
-
-    .signal-bar {
-      width: 4px;
-      border-radius: 999px;
-      background: #202020;
-    }
-
-    .signal-bar.off {
-      background: #151515;
-      border: 1px solid #222;
-    }
-
-    .sidebar-section-title {
-      margin-top: 22px;
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      color: var(--text-muted);
-    }
-
-    .sidebar-nav {
-      margin-top: 10px;
-      display: grid;
-      gap: 6px;
-    }
-
-    .nav-item {
-      font-size: 0.9rem;
-      padding: 7px 9px;
-      border-radius: 999px;
-      color: var(--text-muted);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border: 1px solid transparent;
-      transition: 0.18s ease;
-    }
-
-    .nav-item.active,
-    .nav-item:hover {
-      color: var(--accent);
-      border-color: rgba(0, 255, 136, 0.4);
-      background: radial-gradient(circle at left, rgba(0, 255, 136, 0.12), transparent);
-      box-shadow: 0 0 12px rgba(0, 255, 136, 0.35);
-    }
-
-    .nav-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 999px;
-      background: rgba(0, 255, 136, 0.2);
-    }
-
-    .nav-item.active .nav-dot {
-      background: var(--accent);
-      box-shadow: 0 0 8px rgba(0, 255, 136, 0.9);
-    }
+    .signal-bars { display: flex; gap: 3px; align-items: flex-end; }
+    .signal-bar { width: 4px; border-radius: 999px; background: #202020; }
+    .signal-bar.off { background: #151515; border: 1px solid #222; }
 
     .sidebar-footer {
       margin-top: 26px;
@@ -203,17 +132,14 @@
       background: linear-gradient(145deg, #090909, #050505);
       border: 1px solid rgba(0, 255, 136, 0.18);
       padding: 18px 18px 20px;
-      box-shadow:
-        0 0 18px rgba(0, 0, 0, 0.9),
-        0 0 26px rgba(0, 255, 136, 0.18);
+      box-shadow: 0 0 18px rgba(0, 0, 0, 0.9), 0 0 26px rgba(0, 255, 136, 0.18);
       position: relative;
       overflow: hidden;
     }
 
     .scanline {
       position: absolute;
-      left: 0;
-      right: 0;
+      left: 0; right: 0;
       height: 1px;
       background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.5), transparent);
       opacity: 0.2;
@@ -226,25 +152,9 @@
       100% { top: 110%; }
     }
 
-    .main-header {
-      margin-bottom: 16px;
-      position: relative;
-      z-index: 2;
-    }
-
-    .main-title {
-      font-size: 1.1rem;
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
-      color: var(--accent);
-    }
-
-    .main-subtitle {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-top: 4px;
-      max-width: 420px;
-    }
+    .main-header { margin-bottom: 16px; position: relative; z-index: 2; }
+    .main-title { font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.18em; color: var(--accent); }
+    .main-subtitle { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; max-width: 420px; }
 
     .section-label {
       font-size: 0.75rem;
@@ -263,60 +173,26 @@
       z-index: 2;
     }
 
-    .empty-message {
-      color: var(--text-muted);
-      font-size: 0.9rem;
-      margin-top: 10px;
-    }
-
-    /* Discover thumbnails */
-    .card-thumb {
-      width: 100%;
-      height: 140px;
-      object-fit: cover;
-      border-radius: 8px;
-      margin-bottom: 10px;
-      border: 1px solid rgba(0, 255, 136, 0.2);
-    }
-
-    .discover-actions {
-      display: flex;
-      gap: 8px;
-      margin-top: 10px;
-    }
-
-    .discover-card .btn,
-    .discover-card .btn-secondary {
-      flex: 1;
-      text-align: center;
-    }
+    .empty-message { color: var(--text-muted); font-size: 0.9rem; margin-top: 10px; }
 
     /* Buttons */
-    .btn {
-      position: relative;
+    .btn, .btn-secondary {
       border-radius: 999px;
-      padding: 8px 14px;
-      font-size: 0.8rem;
+      padding: 6px 10px;
+      font-size: 0.7rem;
       text-transform: uppercase;
-      letter-spacing: 0.16em;
+      letter-spacing: 0.14em;
+      cursor: pointer;
       border: 1px solid rgba(0, 255, 136, 0.4);
       background: radial-gradient(circle at top, rgba(0, 255, 136, 0.18), rgba(0, 0, 0, 0.9));
       color: var(--accent);
-      cursor: pointer;
-      overflow: hidden;
-      box-shadow:
-        0 0 12px rgba(0, 255, 136, 0.4),
-        0 0 22px rgba(0, 229, 255, 0.25);
-      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+      box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
     }
 
     .btn-secondary {
       background: radial-gradient(circle at top, rgba(0, 229, 255, 0.12), rgba(0, 0, 0, 0.9));
       border-color: rgba(0, 229, 255, 0.4);
       color: var(--accent2);
-      box-shadow:
-        0 0 10px rgba(0, 229, 255, 0.4),
-        0 0 18px rgba(0, 255, 136, 0.25);
     }
   </style>
 </head>
@@ -345,19 +221,6 @@
           <span>signal lost · local play</span>
         </div>
 
-        <div class="sidebar-section-title">navigation</div>
-        <nav class="sidebar-nav">
-          <div class="nav-item active" data-page="library">
-            <span>library</span>
-            <div class="nav-dot"></div>
-          </div>
-
-          <div class="nav-item" data-page="discover">
-            <span>discover</span>
-            <div class="nav-dot"></div>
-          </div>
-        </nav>
-
         <div class="sidebar-footer">
           zeroSignal is designed for offline‑first play.<br />
           Download once, play anywhere — even with zero signal.
@@ -368,44 +231,25 @@
       <main class="main">
         <div class="scanline"></div>
 
-        <!-- LIBRARY PAGE -->
-        <section id="library" class="page active">
+        <!-- DISCOVER PAGE ONLY -->
+        <section id="discover" class="page active">
           <header class="main-header">
-            <div class="main-title">offline library</div>
-            <p class="main-subtitle">Your installed offline‑ready games appear here.</p>
+            <div class="main-title">discover</div>
+            <p class="main-subtitle">Browse offline‑ready games and download the zeroSignal launcher.</p>
           </header>
 
-          <div class="section-label">installed games</div>
-
-          <div id="platformMissingNote" class="empty-message" style="display:none; margin-bottom: 12px;">
-            zeroSignal Platform not detected —
-            <span style="color: var(--accent); cursor: pointer;" onclick="switchToDiscover()">download here</span>
-          </div>
-
-          <section class="cards">
-            <p class="empty-message">No games installed.</p>
-          </section>
-        </section>
-
-        <!-- DISCOVER PAGE -->
-        <section id="discover" class="page">
-          <header class="main-header">
-            <div class="main-title">discover games</div>
-            <p class="main-subtitle">Browse new offline‑ready games. Launch instantly or download to your library.</p>
-          </header>
-
-          <div class="section-label">zeroSignal platform</div>
+          <!-- PLATFORM DOWNLOAD SECTION -->
+          <div class="section-label">zeroSignal launcher</div>
 
           <section class="cards" style="margin-bottom: 20px;">
             <article class="card discover-card" style="padding: 14px;">
-              <div class="card-title">zeroSignal Platform</div>
               <div class="card-desc">Download the offline launcher for your installed games.</div>
 
-              <div id="platformUpdateNote" style="display:none; margin: 8px 0; color: var(--accent2); font-size: 0.8rem;"></div>
+              <div id="platformUpdateNote" style="display:none; margin: 6px 0; color: var(--accent2); font-size: 0.75rem;"></div>
 
-              <div style="display: flex; gap: 8px; margin-top: 10px;">
-                <select id="platformVersionDropdown" class="btn-secondary" style="flex: 1; padding: 6px 10px; cursor: pointer;"></select>
-                <button id="platformDownloadBtn" class="btn" style="flex: 1;">download latest</button>
+              <div style="display: flex; gap: 6px; margin-top: 8px;">
+                <select id="platformVersionDropdown" class="btn-secondary" style="flex: 1;"></select>
+                <button id="platformDownloadBtn" class="btn" style="flex: 1;">download</button>
               </div>
             </article>
           </section>
@@ -422,30 +266,6 @@
   </div>
 
   <script>
-    // Page switching
-    document.querySelectorAll(".nav-item").forEach(item => {
-      item.addEventListener("click", () => {
-        document.querySelectorAll(".nav-item").forEach(i => i.classList.remove("active"));
-        item.classList.add("active");
-
-        const page = item.dataset.page;
-        document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-        document.getElementById(page).classList.add("active");
-      });
-    });
-
-    function switchToDiscover() {
-      document.querySelector('[data-page="discover"]').click();
-    }
-
-    // Detect platform installation (your platform will set this later)
-    const installedVersion = localStorage.getItem("zeroSignalVersion");
-    const platformInstalled = localStorage.getItem("zeroSignalInstalled");
-
-    if (!platformInstalled) {
-      document.getElementById("platformMissingNote").style.display = "block";
-    }
-
     // Load GitHub Releases
     async function loadPlatformReleases() {
       try {
@@ -454,7 +274,6 @@
 
         if (!Array.isArray(releases) || releases.length === 0) return;
 
-        // Sort newest → oldest
         releases.sort((a, b) => new Date(b.published_at) - new Date(a.published_at));
 
         const latest = releases[0];
@@ -462,7 +281,6 @@
         const downloadBtn = document.getElementById("platformDownloadBtn");
         const updateNote = document.getElementById("platformUpdateNote");
 
-        // Populate dropdown
         releases.forEach(r => {
           const asset = r.assets.find(a => a.name.endsWith(".exe"));
           if (!asset) return;
@@ -473,18 +291,14 @@
           dropdown.appendChild(opt);
         });
 
-        // Default download button → latest release
         const latestAsset = latest.assets.find(a => a.name.endsWith(".exe"));
-        downloadBtn.onclick = () => {
-          window.location.href = latestAsset.browser_download_url;
-        };
+        downloadBtn.onclick = () => window.location.href = latestAsset.browser_download_url;
 
-        // Dropdown download
         dropdown.addEventListener("change", () => {
           window.location.href = dropdown.value;
         });
 
-        // Update detection
+        const installedVersion = localStorage.getItem("zeroSignalVersion");
         if (installedVersion && installedVersion !== latest.tag_name) {
           updateNote.textContent = `update available: ${latest.tag_name}`;
           updateNote.style.display = "block";
@@ -499,3 +313,4 @@
   </script>
 
 </body>
+</html>
