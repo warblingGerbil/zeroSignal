@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <title>zeroSignal – offline games</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <style>
     :root {
       --bg-main: #050505;
@@ -64,12 +65,6 @@
       gap: 20px;
     }
 
-    @media (max-width: 800px) {
-      .app-inner {
-        grid-template-columns: 1fr;
-      }
-    }
-
     /* Sidebar */
     .sidebar {
       border-radius: 14px;
@@ -113,22 +108,10 @@
     }
 
     @keyframes glitch {
-      0%, 90%, 100% {
-        opacity: 0;
-        transform: translate(0, 0);
-      }
-      92% {
-        opacity: 0.7;
-        transform: translate(-2px, 1px);
-      }
-      94% {
-        opacity: 0.4;
-        transform: translate(2px, -1px);
-      }
-      96% {
-        opacity: 0.8;
-        transform: translate(-1px, 2px);
-      }
+      0%, 90%, 100% { opacity: 0; transform: translate(0, 0); }
+      92% { opacity: 0.7; transform: translate(-2px, 1px); }
+      94% { opacity: 0.4; transform: translate(2px, -1px); }
+      96% { opacity: 0.8; transform: translate(-1px, 2px); }
     }
 
     .signal-indicator {
@@ -152,13 +135,7 @@
       width: 4px;
       border-radius: 999px;
       background: #202020;
-      box-shadow: 0 0 0 transparent;
     }
-
-    .signal-bar:nth-child(1) { height: 6px; }
-    .signal-bar:nth-child(2) { height: 10px; }
-    .signal-bar:nth-child(3) { height: 14px; }
-    .signal-bar:nth-child(4) { height: 18px; }
 
     .signal-bar.off {
       background: #151515;
@@ -189,13 +166,7 @@
       align-items: center;
       justify-content: space-between;
       border: 1px solid transparent;
-      transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
-    }
-
-    .nav-item span {
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
+      transition: 0.18s ease;
     }
 
     .nav-item.active,
@@ -256,11 +227,6 @@
     }
 
     .main-header {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
       margin-bottom: 16px;
       position: relative;
       z-index: 2;
@@ -280,66 +246,6 @@
       max-width: 420px;
     }
 
-    .cta-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .btn {
-      position: relative;
-      border-radius: 999px;
-      padding: 8px 14px;
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      border: 1px solid rgba(0, 255, 136, 0.4);
-      background: radial-gradient(circle at top, rgba(0, 255, 136, 0.18), rgba(0, 0, 0, 0.9));
-      color: var(--accent);
-      cursor: pointer;
-      overflow: hidden;
-      box-shadow:
-        0 0 12px rgba(0, 255, 136, 0.4),
-        0 0 22px rgba(0, 229, 255, 0.25);
-      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
-    }
-
-    .btn::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.18), transparent);
-      transform: translateX(-100%);
-      opacity: 0.0;
-      pointer-events: none;
-    }
-
-    .btn:hover {
-      transform: translateY(-1px);
-      box-shadow:
-        0 0 16px rgba(0, 255, 136, 0.7),
-        0 0 26px rgba(0, 229, 255, 0.4);
-    }
-
-    .btn:hover::after {
-      animation: shine 0.7s ease;
-      opacity: 1;
-    }
-
-    @keyframes shine {
-      0% { transform: translateX(-120%); }
-      100% { transform: translateX(120%); }
-    }
-
-    .btn-secondary {
-      background: radial-gradient(circle at top, rgba(0, 229, 255, 0.12), rgba(0, 0, 0, 0.9));
-      border-color: rgba(0, 229, 255, 0.4);
-      color: var(--accent2);
-      box-shadow:
-        0 0 10px rgba(0, 229, 255, 0.4),
-        0 0 18px rgba(0, 255, 136, 0.25);
-    }
-
     .section-label {
       font-size: 0.75rem;
       text-transform: uppercase;
@@ -357,120 +263,20 @@
       z-index: 2;
     }
 
-    .card {
-      position: relative;
-      border-radius: 12px;
-      background: radial-gradient(circle at top left, #151515, #050505);
-      border: 1px solid rgba(0, 255, 136, 0.18);
-      padding: 10px 11px 11px;
-      overflow: hidden;
-      cursor: pointer;
-      transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
-    }
-
-    .card::before {
-      content: "";
-      position: absolute;
-      inset: -40%;
-      background: conic-gradient(
-        from 180deg,
-        rgba(0, 255, 136, 0.0),
-        rgba(0, 255, 136, 0.25),
-        rgba(0, 229, 255, 0.0),
-        rgba(0, 255, 136, 0.0)
-      );
-      opacity: 0;
-      mix-blend-mode: screen;
-      transition: opacity 0.2s ease;
-    }
-
-    .card:hover {
-      transform: translateY(-2px);
-      box-shadow:
-        0 0 14px rgba(0, 255, 136, 0.5),
-        0 0 22px rgba(0, 229, 255, 0.35);
-      border-color: rgba(0, 255, 136, 0.5);
-    }
-
-    .card:hover::before {
-      opacity: 0.7;
-      animation: spin 2.4s linear infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    .card-title {
+    .empty-message {
+      color: var(--text-muted);
       font-size: 0.9rem;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--accent);
-      margin-bottom: 4px;
-    }
-
-    .card-desc {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      margin-bottom: 8px;
-    }
-
-    .pill-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      font-size: 0.7rem;
-    }
-
-    .pill {
-      padding: 3px 7px;
-      border-radius: 999px;
-      border: 1px solid rgba(0, 255, 136, 0.3);
-      color: var(--accent);
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-    }
-
-    .pill-alt {
-      border-color: rgba(0, 229, 255, 0.3);
-      color: var(--accent2);
-    }
-
-    .card-footer {
-      margin-top: 8px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.7rem;
-      color: var(--text-muted);
-    }
-
-    .status-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 999px;
-      background: var(--accent);
-      box-shadow: 0 0 8px rgba(0, 255, 136, 0.9);
-      margin-right: 5px;
-    }
-
-    .status {
-      display: inline-flex;
-      align-items: center;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-    }
-
-    .version {
-      opacity: 0.7;
+      margin-top: 10px;
     }
   </style>
 </head>
+
 <body>
   <div class="noise-overlay"></div>
 
   <div class="app">
     <div class="app-inner">
+
       <!-- Sidebar -->
       <aside class="sidebar">
         <div class="logo">
@@ -495,14 +301,7 @@
             <span>library</span>
             <div class="nav-dot"></div>
           </div>
-          <div class="nav-item">
-            <span>discover</span>
-            <div class="nav-dot"></div>
-          </div>
-          <div class="nav-item">
-            <span>downloads</span>
-            <div class="nav-dot"></div>
-          </div>
+
           <div class="nav-item">
             <span>settings</span>
             <div class="nav-dot"></div>
@@ -520,78 +319,18 @@
         <div class="scanline"></div>
 
         <header class="main-header">
-          <div>
-            <div class="main-title">offline library</div>
-            <p class="main-subtitle">
-              This is the base layout for your zeroSignal hub. Replace these cards with real games,
-              wire buttons to your Electron launcher, and hook downloads into your offline platform.
-            </p>
-          </div>
-          <div class="cta-group">
-            <button class="btn">download platform</button>
-            <button class="btn btn-secondary">browse games</button>
-          </div>
+          <div class="main-title">offline library</div>
+          <p class="main-subtitle">Your installed offline‑ready games appear here.</p>
         </header>
 
-        <div class="section-label">featured offline‑ready games</div>
+        <div class="section-label">installed games</div>
+
         <section class="cards">
-          <article class="card">
-            <div class="card-title">placeholder game #1</div>
-            <div class="card-desc">
-              A sample card to show how your offline games could appear inside zeroSignal.
-            </div>
-            <div class="pill-row">
-              <div class="pill">offline</div>
-              <div class="pill pill-alt">html5</div>
-            </div>
-            <div class="card-footer">
-              <div class="status">
-                <span class="status-dot"></span>
-                installed
-              </div>
-              <div class="version">v0.1</div>
-            </div>
-          </article>
-
-          <article class="card">
-            <div class="card-title">placeholder game #2</div>
-            <div class="card-desc">
-              Swap this with a real game entry and connect it to your download + install flow.
-            </div>
-            <div class="pill-row">
-              <div class="pill">offline</div>
-              <div class="pill pill-alt">downloadable</div>
-            </div>
-            <div class="card-footer">
-              <div class="status">
-                <span class="status-dot"></span>
-                ready to install
-              </div>
-              <div class="version">v0.1</div>
-            </div>
-          </article>
-
-          <article class="card">
-            <div class="card-title">placeholder game #3</div>
-            <div class="card-desc">
-              Use cards like this to show which games are available both online and in your offline platform.
-            </div>
-            <div class="pill-row">
-              <div class="pill">offline</div>
-              <div class="pill pill-alt">sync</div>
-            </div>
-            <div class="card-footer">
-              <div class="status">
-                <span class="status-dot"></span>
-                synced
-              </div>
-              <div class="version">v0.1</div>
-            </div>
-          </article>
+          <p class="empty-message">No games installed.</p>
         </section>
+
       </main>
     </div>
   </div>
 </body>
 </html>
-
