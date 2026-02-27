@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Tic‑Tac‑Toe – zeroSignal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="noise-overlay"></div>
+
+  <div class="game-shell">
+    <header class="game-header">
+      <div class="game-title">tic‑tac‑toe</div>
+      <div class="game-subtitle">local 2‑player · offline · zeroSignal test build</div>
+    </header>
+
+    <main class="game-main">
+      <div class="board" id="board">
+        <button class="cell" data-index="0"></button>
+        <button class="cell" data-index="1"></button>
+        <button class="cell" data-index="2"></button>
+        <button class="cell" data-index="3"></button>
+        <button class="cell" data-index="4"></button>
+        <button class="cell" data-index="5"></button>
+        <button class="cell" data-index="6"></button>
+        <button class="cell" data-index="7"></button>
+        <button class="cell" data-index="8"></button>
+      </div>
+
+      <div class="info-panel">
+        <div class="turn-indicator" id="turnIndicator">
+          Player 1 (X) · your move
+        </div>
+        <div class="win-list">
+          <div class="win-list-title">tracking possible wins</div>
+          <ul id="winList"></ul>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="overlay" id="overlay">
+    <div class="overlay-content">
+      <div class="overlay-message" id="overlayMessage"></div>
+      <button class="btn" id="playAgainBtn">play again</button>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
