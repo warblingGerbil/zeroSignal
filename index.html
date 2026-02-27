@@ -268,6 +268,28 @@
       font-size: 0.9rem;
       margin-top: 10px;
     }
+
+    /* Discover thumbnails */
+    .card-thumb {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      border: 1px solid rgba(0, 255, 136, 0.2);
+    }
+
+    .discover-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .discover-card .btn,
+    .discover-card .btn-secondary {
+      flex: 1;
+      text-align: center;
+    }
   </style>
 </head>
 
@@ -297,18 +319,13 @@
 
         <div class="sidebar-section-title">navigation</div>
         <nav class="sidebar-nav">
-          <div class="nav-item active">
+          <div class="nav-item active" data-page="library">
             <span>library</span>
             <div class="nav-dot"></div>
           </div>
 
-          <div class="nav-item">
+          <div class="nav-item" data-page="discover">
             <span>discover</span>
-            <div class="nav-dot"></div>
-          </div>
-
-          <div class="nav-item">
-            <span>settings</span>
             <div class="nav-dot"></div>
           </div>
         </nav>
@@ -323,19 +340,73 @@
       <main class="main">
         <div class="scanline"></div>
 
-        <header class="main-header">
-          <div class="main-title">offline library</div>
-          <p class="main-subtitle">Your installed offline‑ready games appear here.</p>
-        </header>
+        <!-- LIBRARY PAGE -->
+        <section id="library" class="page active">
+          <header class="main-header">
+            <div class="main-title">offline library</div>
+            <p class="main-subtitle">Your installed offline‑ready games appear here.</p>
+          </header>
 
-        <div class="section-label">installed games</div>
+          <div class="section-label">installed games</div>
 
-        <section class="cards">
-          <p class="empty-message">No games installed.</p>
+          <section class="cards">
+            <p class="empty-message">No games installed.</p>
+          </section>
+        </section>
+
+        <!-- DISCOVER PAGE -->
+        <section id="discover" class="page">
+          <header class="main-header">
+            <div class="main-title">discover games</div>
+            <p class="main-subtitle">Browse new offline‑ready games. Launch instantly or download to your library.</p>
+          </header>
+
+          <div class="section-label">available games</div>
+
+          <section class="cards">
+
+            <!-- Example discover card (replace later) -->
+            <article class="card discover-card">
+              <img src="images/tictactoe.png" class="card-thumb" alt="Game thumbnail">
+
+              <div class="card-title">Tic‑Tac‑Toe</div>
+              <div class="card-desc">A simple offline strategy game. Try it instantly or download for local play.</div>
+
+              <div class="pill-row">
+                <div class="pill">offline</div>
+                <div class="pill pill-alt">html5</div>
+              </div>
+
+              <div class="discover-actions">
+                <button class="btn btn-secondary">launch</button>
+                <button class="btn">download</button>
+              </div>
+
+              <div class="card-footer">
+                <div class="version">v1.0</div>
+              </div>
+            </article>
+
+          </section>
         </section>
 
       </main>
     </div>
   </div>
+
+  <script>
+    // Simple page switching for website version
+    document.querySelectorAll(".nav-item").forEach(item => {
+      item.addEventListener("click", () => {
+        document.querySelectorAll(".nav-item").forEach(i => i.classList.remove("active"));
+        item.classList.add("active");
+
+        const page = item.dataset.page;
+        document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+        document.getElementById(page).classList.add("active");
+      });
+    });
+  </script>
+
 </body>
 </html>
