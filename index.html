@@ -257,8 +257,8 @@
 
     .cards {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 16px;
       position: relative;
       z-index: 2;
     }
@@ -272,7 +272,7 @@
     /* Discover thumbnails */
     .card-thumb {
       width: 100%;
-      height: 120px;
+      height: 140px;
       object-fit: cover;
       border-radius: 8px;
       margin-bottom: 10px;
@@ -289,6 +289,34 @@
     .discover-card .btn-secondary {
       flex: 1;
       text-align: center;
+    }
+
+    /* Buttons */
+    .btn {
+      position: relative;
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      border: 1px solid rgba(0, 255, 136, 0.4);
+      background: radial-gradient(circle at top, rgba(0, 255, 136, 0.18), rgba(0, 0, 0, 0.9));
+      color: var(--accent);
+      cursor: pointer;
+      overflow: hidden;
+      box-shadow:
+        0 0 12px rgba(0, 255, 136, 0.4),
+        0 0 22px rgba(0, 229, 255, 0.25);
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+
+    .btn-secondary {
+      background: radial-gradient(circle at top, rgba(0, 229, 255, 0.12), rgba(0, 0, 0, 0.9));
+      border-color: rgba(0, 229, 255, 0.4);
+      color: var(--accent2);
+      box-shadow:
+        0 0 10px rgba(0, 229, 255, 0.4),
+        0 0 18px rgba(0, 255, 136, 0.25);
     }
   </style>
 </head>
@@ -367,7 +395,7 @@
 
             <!-- Example discover card (replace later) -->
             <article class="card discover-card">
-              <img src="images/tictactoe.png" class="card-thumb" alt="Game thumbnail">
+              <img src="images/tic-tac-toe.png" class="card-thumb" alt="Game thumbnail">
 
               <div class="card-title">Tic‑Tac‑Toe</div>
               <div class="card-desc">A simple offline strategy game. Try it instantly or download for local play.</div>
