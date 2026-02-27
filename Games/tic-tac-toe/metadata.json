@@ -1,0 +1,7 @@
+{
+  "name": "Tic-Tac-Toe",
+  "id": "tic-tac-toe",
+  "description": "A simple offline-ready Tic-Tac-Toe game.",
+  "thumbnail": "assets/thumbnail.png",
+  "popularity": 1
+}
