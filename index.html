@@ -314,3 +314,319 @@
 
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>zeroSignal – offline games</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    :root {
+      --bg-main: #050505;
+      --bg-panel: #0f0f0f;
+      --accent: #00ff88;
+      --accent2: #00e5ff;
+      --glitch-pink: #ff0055;
+      --text-main: #f5f5f5;
+      --text-muted: #888;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #101010, var(--bg-main));
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+      overflow-x: hidden;
+    }
+
+    .noise-overlay {
+      pointer-events: none;
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='2' stitchTiles='noStitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.12'/%3E%3C/svg%3E");
+      mix-blend-mode: soft-light;
+      z-index: 1;
+    }
+
+    .app {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 1100px;
+      margin: 32px 16px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(0, 255, 136, 0.08), rgba(0, 229, 255, 0.04));
+      padding: 1px;
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.9), 0 0 40px rgba(0, 255, 136, 0.25);
+    }
+
+    .app-inner {
+      border-radius: 17px;
+      background: radial-gradient(circle at top left, #151515, var(--bg-panel));
+      padding: 20px 22px 24px;
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 20px;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      border-radius: 14px;
+      background: linear-gradient(180deg, #101010, #050505);
+      padding: 16px 14px;
+      border: 1px solid rgba(0, 255, 136, 0.15);
+      box-shadow: 0 0 18px rgba(0, 0, 0, 0.8);
+    }
+
+    .logo { position: relative; margin-bottom: 18px; }
+
+    .logo-text {
+      font-size: 1.3rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-shadow: 0 0 8px rgba(0, 255, 136, 0.8), 0 0 18px rgba(0, 229, 255, 0.5);
+    }
+
+    .logo-glitch {
+      position: absolute;
+      inset: 0;
+      color: var(--glitch-pink);
+      mix-blend-mode: screen;
+      opacity: 0.0;
+      pointer-events: none;
+      animation: glitch 2.8s infinite;
+    }
+
+    .logo-sub {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    @keyframes glitch {
+      0%, 90%, 100% { opacity: 0; transform: translate(0, 0); }
+      92% { opacity: 0.7; transform: translate(-2px, 1px); }
+      94% { opacity: 0.4; transform: translate(2px, -1px); }
+      96% { opacity: 0.8; transform: translate(-1px, 2px); }
+    }
+
+    .signal-indicator {
+      margin-top: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+    }
+
+    .signal-bars { display: flex; gap: 3px; align-items: flex-end; }
+    .signal-bar { width: 4px; border-radius: 999px; background: #202020; }
+    .signal-bar.off { background: #151515; border: 1px solid #222; }
+
+    .sidebar-footer {
+      margin-top: 26px;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      border-top: 1px solid #181818;
+      padding-top: 10px;
+    }
+
+    /* Main content */
+    .main {
+      border-radius: 14px;
+      background: linear-gradient(145deg, #090909, #050505);
+      border: 1px solid rgba(0, 255, 136, 0.18);
+      padding: 18px 18px 20px;
+      box-shadow: 0 0 18px rgba(0, 0, 0, 0.9), 0 0 26px rgba(0, 255, 136, 0.18);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .scanline {
+      position: absolute;
+      left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.5), transparent);
+      opacity: 0.2;
+      animation: scan 5s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes scan {
+      0% { top: -10%; }
+      100% { top: 110%; }
+    }
+
+    .main-header { margin-bottom: 16px; position: relative; z-index: 2; }
+    .main-title { font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.18em; color: var(--accent); }
+    .main-subtitle { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; max-width: 420px; }
+
+    .section-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      margin-top: 6px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 16px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .empty-message { color: var(--text-muted); font-size: 0.9rem; margin-top: 10px; }
+
+    /* Buttons */
+    .btn, .btn-secondary {
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      cursor: pointer;
+      border: 1px solid rgba(0, 255, 136, 0.4);
+      background: radial-gradient(circle at top, rgba(0, 255, 136, 0.18), rgba(0, 0, 0, 0.9));
+      color: var(--accent);
+      box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+    }
+
+    .btn-secondary {
+      background: radial-gradient(circle at top, rgba(0, 229, 255, 0.12), rgba(0, 0, 0, 0.9));
+      border-color: rgba(0, 229, 255, 0.4);
+      color: var(--accent2);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="noise-overlay"></div>
+
+  <div class="app">
+    <div class="app-inner">
+
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="logo">
+          <div class="logo-text">zeroSignal</div>
+          <div class="logo-text logo-glitch">zeroSignal</div>
+          <div class="logo-sub">offline games platform</div>
+        </div>
+
+        <div class="signal-indicator">
+          <div class="signal-bars">
+            <div class="signal-bar off"></div>
+            <div class="signal-bar off"></div>
+            <div class="signal-bar off"></div>
+            <div class="signal-bar off"></div>
+          </div>
+          <span>signal lost · local play</span>
+        </div>
+
+        <div class="sidebar-footer">
+          zeroSignal is designed for offline‑first play.<br />
+          Download once, play anywhere — even with zero signal.
+        </div>
+      </aside>
+
+      <!-- Main content -->
+      <main class="main">
+        <div class="scanline"></div>
+
+        <!-- DISCOVER PAGE ONLY -->
+        <section id="discover" class="page active">
+          <header class="main-header">
+            <div class="main-title">discover</div>
+            <p class="main-subtitle">Browse offline‑ready games and download the zeroSignal launcher.</p>
+          </header>
+
+          <!-- PLATFORM DOWNLOAD SECTION -->
+          <div class="section-label">zeroSignal launcher</div>
+
+          <section class="cards" style="margin-bottom: 20px;">
+            <article class="card discover-card" style="padding: 14px;">
+              <div class="card-desc">Download the offline launcher for your installed games.</div>
+
+              <div id="platformUpdateNote" style="display:none; margin: 6px 0; color: var(--accent2); font-size: 0.75rem;"></div>
+
+              <div style="display: flex; gap: 6px; margin-top: 8px;">
+                <select id="platformVersionDropdown" class="btn-secondary" style="flex: 1;"></select>
+                <button id="platformDownloadBtn" class="btn" style="flex: 1;">download</button>
+              </div>
+            </article>
+          </section>
+
+          <div class="section-label">available games</div>
+
+          <section class="cards">
+            <p class="empty-message">No games available yet.</p>
+          </section>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <script>
+    // Load GitHub Releases
+    async function loadPlatformReleases() {
+      try {
+        const res = await fetch("https://api.github.com/repos/warblingGerbil/zeroSignal/releases");
+        const releases = await res.json();
+
+        if (!Array.isArray(releases) || releases.length === 0) return;
+
+        releases.sort((a, b) => new Date(b.published_at) - new Date(a.published_at));
+
+        const latest = releases[0];
+        const dropdown = document.getElementById("platformVersionDropdown");
+        const downloadBtn = document.getElementById("platformDownloadBtn");
+        const updateNote = document.getElementById("platformUpdateNote");
+
+        releases.forEach(r => {
+          const asset = r.assets.find(a => a.name.endsWith(".exe"));
+          if (!asset) return;
+
+          const opt = document.createElement("option");
+          opt.value = asset.browser_download_url;
+          opt.textContent = r.tag_name;
+          dropdown.appendChild(opt);
+        });
+
+        const latestAsset = latest.assets.find(a => a.name.endsWith(".exe"));
+        downloadBtn.onclick = () => window.location.href = latestAsset.browser_download_url;
+
+        dropdown.addEventListener("change", () => {
+          window.location.href = dropdown.value;
+        });
+
+        const installedVersion = localStorage.getItem("zeroSignalVersion");
+        if (installedVersion && installedVersion !== latest.tag_name) {
+          updateNote.textContent = `update available: ${latest.tag_name}`;
+          updateNote.style.display = "block";
+        }
+
+      } catch (err) {
+        console.error("Failed to load releases:", err);
+      }
+    }
+
+    loadPlatformReleases();
+  </script>
+
+</body>
+</html>
