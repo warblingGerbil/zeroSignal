@@ -179,7 +179,7 @@
       max-width: 420px;
     }
 
-    /* Tiny buttons row */
+    /* Tiny launcher row */
     .launcher-row {
       display: flex;
       justify-content: space-between;
@@ -216,6 +216,15 @@
       color: var(--accent2);
     }
 
+    .section-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      margin-top: 20px;
+    }
+
     .cards {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
@@ -224,7 +233,67 @@
       z-index: 2;
     }
 
-    .empty-message { color: var(--text-muted); font-size: 0.9rem; margin-top: 10px; }
+    .card-thumb {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      border: 1px solid rgba(0, 255, 136, 0.2);
+    }
+
+    .card-title {
+      font-size: 0.95rem;
+      margin-bottom: 4px;
+      color: var(--text-main);
+    }
+
+    .card-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .discover-card {
+      border-radius: 10px;
+      background: radial-gradient(circle at top, rgba(0, 255, 136, 0.08), rgba(0, 0, 0, 0.9));
+      border: 1px solid rgba(0, 255, 136, 0.18);
+      box-shadow: 0 0 14px rgba(0, 0, 0, 0.8);
+      padding: 14px;
+    }
+
+    .discover-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .btn, .btn-secondary {
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      cursor: pointer;
+      border: 1px solid rgba(0, 255, 136, 0.4);
+      background: radial-gradient(circle at top, rgba(0, 255, 136, 0.18), rgba(0, 0, 0, 0.9));
+      color: var(--accent);
+      box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-secondary {
+      background: radial-gradient(circle at top, rgba(0, 229, 255, 0.12), rgba(0, 0, 0, 0.9));
+      border-color: rgba(0, 229, 255, 0.4);
+      color: var(--accent2);
+    }
+
+    .empty-message {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-top: 10px;
+    }
   </style>
 </head>
 
@@ -270,10 +339,9 @@
             <p class="main-subtitle">Browse offline‑ready games and download the zeroSignal launcher.</p>
           </header>
 
-          <!-- TINY BUTTONS ON SAME LINE AS "zeroSignal launcher" -->
+          <!-- Launcher row with tiny buttons -->
           <div class="launcher-row">
             <div class="launcher-label">zeroSignal launcher</div>
-
             <div class="launcher-buttons">
               <select id="platformVersionDropdown" class="tiny-btn tiny-btn-secondary"></select>
               <button id="platformDownloadBtn" class="tiny-btn">download</button>
@@ -282,10 +350,10 @@
 
           <div id="platformUpdateNote" style="display:none; margin: 4px 0 10px 0; color: var(--accent2); font-size: 0.75rem;"></div>
 
-          <div class="section-label" style="margin-top: 20px;">available games</div>
+          <div class="section-label">available games</div>
 
           <section class="cards">
-            <p class="empty-message">No games available yet.</p>
+            <p class="empty-message">Loading games…</p>
           </section>
 
         </section>
@@ -295,6 +363,7 @@
   </div>
 
   <script>
+    // Load platform releases for launcher
     async function loadPlatformReleases() {
       try {
         const res = await fetch("https://api.github.com/repos/warblingGerbil/zeroSignal/releases");
@@ -320,10 +389,12 @@
         });
 
         const latestAsset = latest.assets.find(a => a.name.endsWith(".exe"));
-        downloadBtn.onclick = () => window.location.href = latestAsset.browser_download_url;
+        if (latestAsset) {
+          downloadBtn.onclick = () => window.location.href = latestAsset.browser_download_url;
+        }
 
         dropdown.addEventListener("change", () => {
-          window.location.href = dropdown.value;
+          if (dropdown.value) window.location.href = dropdown.value;
         });
 
         const installedVersion = localStorage.getItem("zeroSignalVersion");
@@ -333,12 +404,81 @@
         }
 
       } catch (err) {
-        console.error("Failed to load releases:", err);
+        console.error("Failed to load platform releases:", err);
       }
     }
 
-    loadPlatformReleases();
-  </script>
+    // Load games dynamically from /games and match to releases
+    async function loadGames() {
+      const gamesContainer = document.querySelector(".cards");
+      gamesContainer.innerHTML = `<p class="empty-message">Loading games…</p>`;
 
-</body>
-</html>
+      try {
+        // 1. Fetch GitHub releases
+        const releasesRes = await fetch("https://api.github.com/repos/warblingGerbil/zeroSignal/releases");
+        const releases = await releasesRes.json();
+
+        // 2. Static list of game folders for now (can expand later)
+        const gameFolders = ["tic-tac-toe"]; // add more folder names here as you create games
+
+        const games = [];
+
+        for (const folder of gameFolders) {
+          try {
+            // 3. Load metadata.json
+            const metaRes = await fetch(`games/${folder}/metadata.json`);
+            if (!metaRes.ok) continue;
+            const meta = await metaRes.json();
+
+            // 4. Find matching release ZIP by game id in tag name
+            const matchingRelease = releases.find(r =>
+              r.tag_name.toLowerCase().includes(meta.id.toLowerCase())
+            );
+
+            let downloadURL = null;
+            if (matchingRelease) {
+              const asset = matchingRelease.assets.find(a => a.name.endsWith(".zip"));
+              if (asset) downloadURL = asset.browser_download_url;
+            }
+
+            games.push({
+              ...meta,
+              playURL: `games/${folder}/index.html`,
+              downloadURL
+            });
+
+          } catch (err) {
+            console.error("Error loading game:", folder, err);
+          }
+        }
+
+        // 5. Sort by popularity (lowest at bottom)
+        games.sort((a, b) => b.popularity - a.popularity);
+
+        // 6. Render cards
+        gamesContainer.innerHTML = "";
+        if (games.length === 0) {
+          gamesContainer.innerHTML = `<p class="empty-message">No games available yet.</p>`;
+          return;
+        }
+
+        games.forEach(game => {
+          const card = document.createElement("article");
+          card.className = "card discover-card";
+
+          card.innerHTML = `
+            <img src="${game.thumbnail}" class="card-thumb" alt="${game.name} thumbnail" />
+            <div class="card-title">${game.name}</div>
+            <div class="card-desc">${game.description}</div>
+            <div class="discover-actions">
+              <a class="btn" href="${game.playURL}" target="_blank">Play</a>
+              ${game.downloadURL ? `<a class="btn-secondary" href="${game.downloadURL}" download>Download</a>` : ""}
+            </div>
+          `;
+
+          gamesContainer.appendChild(card);
+        });
+
+      } catch (err) {
+        console.error("Failed to load games:", err);
+        gamesContainer.innerHTML
