@@ -29,7 +29,6 @@
       overflow-x: hidden;
     }
 
-    /* Prevent uppercase inheritance anywhere in sidebar */
     .sidebar, .sidebar * {
       text-transform: none !important;
       font-variant: normal !important;
@@ -65,7 +64,6 @@
       gap: 20px;
     }
 
-    /* Sidebar */
     .sidebar {
       border-radius: 14px;
       background: linear-gradient(180deg, #101010, #050505);
@@ -133,7 +131,6 @@
       padding-top: 10px;
     }
 
-    /* Main content */
     .main {
       border-radius: 14px;
       background: linear-gradient(145deg, #090909, #050505);
@@ -179,7 +176,6 @@
       max-width: 420px;
     }
 
-    /* Tiny launcher row */
     .launcher-row {
       display: flex;
       justify-content: space-between;
@@ -303,7 +299,6 @@
   <div class="app">
     <div class="app-inner">
 
-      <!-- Sidebar -->
       <aside class="sidebar">
         <div class="logo">
           <div class="logo-text">zeroSignal</div>
@@ -327,19 +322,15 @@
         </div>
       </aside>
 
-      <!-- Main content -->
       <main class="main">
         <div class="scanline"></div>
 
-        <!-- DISCOVER PAGE ONLY -->
         <section id="discover" class="page active">
-
           <header class="main-header">
             <div class="main-title">discover</div>
             <p class="main-subtitle">Browse offline‑ready games and download the zeroSignal launcher.</p>
           </header>
 
-          <!-- Launcher row with tiny buttons -->
           <div class="launcher-row">
             <div class="launcher-label">zeroSignal launcher</div>
             <div class="launcher-buttons">
@@ -355,7 +346,6 @@
           <section class="cards">
             <p class="empty-message">Loading games…</p>
           </section>
-
         </section>
 
       </main>
@@ -363,13 +353,37 @@
   </div>
 
   <script>
-    // Load platform releases for launcher
+    console.log("[zeroSignal] script loaded");
+
+    async function fetchJson(url, label) {
+      console.log(`[zeroSignal] fetching ${label}:`, url);
+      const res = await fetch(url, {
+        headers: { "User-Agent": "zeroSignal-website" }
+      });
+
+      console.log(`[zeroSignal] ${label} status:`, res.status);
+
+      if (!res.ok) {
+        const text = await res.text().catch(() => "");
+        throw new Error(`${label} failed: ${res.status} ${res.statusText} ${text}`);
+      }
+
+      const data = await res.json();
+      console.log(`[zeroSignal] ${label} data:`, data);
+      return data;
+    }
+
     async function loadPlatformReleases() {
       try {
-        const res = await fetch("https://api.github.com/repos/warblingGerbil/zeroSignal/releases");
-        const releases = await res.json();
+        const releases = await fetchJson(
+          "https://api.github.com/repos/warblingGerbil/zeroSignal/releases?per_page=100",
+          "platform releases"
+        );
 
-        if (!Array.isArray(releases) || releases.length === 0) return;
+        if (!Array.isArray(releases) || releases.length === 0) {
+          console.log("[zeroSignal] no platform releases found");
+          return;
+        }
 
         releases.sort((a, b) => new Date(b.published_at) - new Date(a.published_at));
 
@@ -379,7 +393,7 @@
         const updateNote = document.getElementById("platformUpdateNote");
 
         releases.forEach(r => {
-          const asset = r.assets.find(a => a.name.endsWith(".exe"));
+          const asset = r.assets?.find(a => a.name.endsWith(".exe"));
           if (!asset) return;
 
           const opt = document.createElement("option");
@@ -388,13 +402,19 @@
           dropdown.appendChild(opt);
         });
 
-        const latestAsset = latest.assets.find(a => a.name.endsWith(".exe"));
+        const latestAsset = latest.assets?.find(a => a.name.endsWith(".exe"));
         if (latestAsset) {
-          downloadBtn.onclick = () => window.location.href = latestAsset.browser_download_url;
+          downloadBtn.onclick = () => {
+            console.log("[zeroSignal] downloading latest platform:", latestAsset.browser_download_url);
+            window.location.href = latestAsset.browser_download_url;
+          };
         }
 
         dropdown.addEventListener("change", () => {
-          if (dropdown.value) window.location.href = dropdown.value;
+          if (dropdown.value) {
+            console.log("[zeroSignal] downloading selected platform:", dropdown.value);
+            window.location.href = dropdown.value;
+          }
         });
 
         const installedVersion = localStorage.getItem("zeroSignalVersion");
@@ -404,40 +424,39 @@
         }
 
       } catch (err) {
-        console.error("Failed to load platform releases:", err);
+        console.error("[zeroSignal] loadPlatformReleases error:", err);
       }
     }
 
-    // Load games dynamically from /games and match to releases
     async function loadGames() {
       const gamesContainer = document.querySelector(".cards");
       gamesContainer.innerHTML = `<p class="empty-message">Loading games…</p>`;
 
       try {
-        // 1. Fetch GitHub releases
-        const releasesRes = await fetch("https://api.github.com/repos/warblingGerbil/zeroSignal/releases");
-        const releases = await releasesRes.json();
+        const releases = await fetchJson(
+          "https://api.github.com/repos/warblingGerbil/zeroSignal/releases?per_page=100",
+          "game releases"
+        );
 
-        // 2. Static list of game folders for now (can expand later)
-        const gameFolders = ["tic-tac-toe"]; // add more folder names here as you create games
-
+        const gameFolders = ["tic-tac-toe"]; // add more later
         const games = [];
 
         for (const folder of gameFolders) {
           try {
-            // 3. Load metadata.json
+            console.log("[zeroSignal] loading metadata for", folder);
             const metaRes = await fetch(`games/${folder}/metadata.json`);
+            console.log("[zeroSignal] metadata status for", folder, metaRes.status);
             if (!metaRes.ok) continue;
             const meta = await metaRes.json();
+            console.log("[zeroSignal] metadata for", folder, meta);
 
-            // 4. Find matching release ZIP by game id in tag name
             const matchingRelease = releases.find(r =>
               r.tag_name.toLowerCase().includes(meta.id.toLowerCase())
             );
 
             let downloadURL = null;
             if (matchingRelease) {
-              const asset = matchingRelease.assets.find(a => a.name.endsWith(".zip"));
+              const asset = matchingRelease.assets?.find(a => a.name.endsWith(".zip"));
               if (asset) downloadURL = asset.browser_download_url;
             }
 
@@ -448,14 +467,12 @@
             });
 
           } catch (err) {
-            console.error("Error loading game:", folder, err);
+            console.error("[zeroSignal] error loading game folder", folder, err);
           }
         }
 
-        // 5. Sort by popularity (lowest at bottom)
         games.sort((a, b) => b.popularity - a.popularity);
 
-        // 6. Render cards
         gamesContainer.innerHTML = "";
         if (games.length === 0) {
           gamesContainer.innerHTML = `<p class="empty-message">No games available yet.</p>`;
@@ -480,27 +497,7 @@
         });
 
       } catch (err) {
-        console.error("Failed to load games:", err);
-        gamesContainer.innerHTML
-                games.forEach(game => {
-          const card = document.createElement("article");
-          card.className = "card discover-card";
-
-          card.innerHTML = `
-            <img src="${game.thumbnail}" class="card-thumb" alt="${game.name} thumbnail" />
-            <div class="card-title">${game.name}</div>
-            <div class="card-desc">${game.description}</div>
-            <div class="discover-actions">
-              <a class="btn" href="${game.playURL}" target="_blank">Play</a>
-              ${game.downloadURL ? `<a class="btn-secondary" href="${game.downloadURL}" download>Download</a>` : ""}
-            </div>
-          `;
-
-          gamesContainer.appendChild(card);
-        });
-
-      } catch (err) {
-        console.error("Failed to load games:", err);
+        console.error("[zeroSignal] loadGames error:", err);
         gamesContainer.innerHTML = `<p class="empty-message">Failed to load games.</p>`;
       }
     }
@@ -511,4 +508,3 @@
 
 </body>
 </html>
-
