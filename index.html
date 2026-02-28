@@ -482,3 +482,33 @@
       } catch (err) {
         console.error("Failed to load games:", err);
         gamesContainer.innerHTML
+                games.forEach(game => {
+          const card = document.createElement("article");
+          card.className = "card discover-card";
+
+          card.innerHTML = `
+            <img src="${game.thumbnail}" class="card-thumb" alt="${game.name} thumbnail" />
+            <div class="card-title">${game.name}</div>
+            <div class="card-desc">${game.description}</div>
+            <div class="discover-actions">
+              <a class="btn" href="${game.playURL}" target="_blank">Play</a>
+              ${game.downloadURL ? `<a class="btn-secondary" href="${game.downloadURL}" download>Download</a>` : ""}
+            </div>
+          `;
+
+          gamesContainer.appendChild(card);
+        });
+
+      } catch (err) {
+        console.error("Failed to load games:", err);
+        gamesContainer.innerHTML = `<p class="empty-message">Failed to load games.</p>`;
+      }
+    }
+
+    loadPlatformReleases();
+    loadGames();
+  </script>
+
+</body>
+</html>
+
