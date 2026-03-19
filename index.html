@@ -4,9 +4,20 @@
   <meta charset="UTF-8" />
   <title>zeroSignal – offline games</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" type="image/png" href="webIcon.png?v=1000">
+  <link rel="icon" type="image/png" href="webIcon.ico?v=1000">
 
   <style>
+
+    /* ------------------------------
+       RUSHBLADE FONT (same directory)
+       ------------------------------ */
+    @font-face {
+      font-family: 'Rushblade';
+      src: url('./Rushblade.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+    }
+
     :root {
       --theme: rgb(0, 153, 255);
 
@@ -21,7 +32,6 @@
       --text-main: #f5f5f5;
       --text-muted: #888;
     }
-
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -194,7 +204,11 @@
 
     .logo { position: relative; margin-bottom: 18px; }
 
+    /* ------------------------------
+       UPDATED: zeroSignal font
+       ------------------------------ */
     .logo-text {
+      font-family: 'Rushblade', sans-serif;
       font-size: 1.3rem;
       letter-spacing: 0.05em;
       font-weight: 600;
@@ -205,13 +219,8 @@
       animation: microGlitch 4s infinite;
     }
 
-    @keyframes microGlitch {
-      0%, 97%, 100% { text-shadow: 0 0 6px var(--theme-glow); }
-      98% { text-shadow: 2px 0 var(--theme-strong), -2px 0 var(--theme-soft); }
-      99% { text-shadow: -2px 0 var(--theme-strong), 2px 0 var(--theme-soft); }
-    }
-
     .logo-glitch {
+      font-family: 'Rushblade', sans-serif;
       position: absolute;
       inset: 0;
       color: var(--theme-strong);
@@ -219,6 +228,12 @@
       opacity: 0.0;
       pointer-events: none;
       animation: glitch 2.8s infinite;
+    }
+
+    @keyframes microGlitch {
+      0%, 97%, 100% { text-shadow: 0 0 6px var(--theme-glow); }
+      98% { text-shadow: 2px 0 var(--theme-strong), -2px 0 var(--theme-soft); }
+      99% { text-shadow: -2px 0 var(--theme-strong), 2px 0 var(--theme-soft); }
     }
 
     @keyframes glitch {
@@ -294,11 +309,35 @@
     }
 
     .main-title {
-      font-size: 1.1rem;
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
-      color: var(--theme-strong);
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--theme-strong);
+    font-weight: 600;
+
+    animation: titlePulse 4.5s ease-in-out infinite;
+    text-shadow:
+      0 0 4px var(--theme-strong),
+      0 0 10px var(--theme-soft),
+      0 0 18px var(--theme-glow),
+      0 0 28px var(--theme-glow);
     }
+
+    @keyframes titlePulse {
+      0% {
+        text-shadow:
+          0 0 4px var(--theme-strong),
+          0 0 10px var(--theme-soft),
+          0 0 18px var(--theme-glow);
+      }
+      100% {
+        text-shadow:
+          0 0 6px var(--theme-strong),
+          0 0 14px var(--theme-soft),
+          0 0 26px var(--theme-glow);
+      }
+    }
+
 
     .main-subtitle {
       font-size: 0.8rem;
@@ -323,6 +362,7 @@
       position: relative;
       z-index: 2;
     }
+
 
     .discover-card {
       position: relative;
@@ -370,6 +410,7 @@
     .card-desc {
       font-size: 0.8rem;
       color: var(--text-muted);
+      
     }
   </style>
 </head>
@@ -463,4 +504,3 @@
 
 </body>
 </html>
-
