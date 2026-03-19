@@ -1,1 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>zeroSignal – offline games</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    :root {
+      --theme: rgb(0, 153, 255);
+
+      --theme-strong: var(--theme);
+      --theme-med:    color-mix(in srgb, var(--theme) 55%, transparent);
+      --theme-soft:   color-mix(in srgb, var(--theme) 25%, transparent);
+      --theme-faint:  color-mix(in srgb, var(--theme) 12%, transparent);
+      --theme-glow:   color-mix(in srgb, var(--theme) 35%, transparent);
+
+      --bg-main: #050505;
+      --bg-panel: #0f0f0f;
+      --text-main: #f5f5f5;
+      --text-muted: #888;
+    }
+
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #0c1a22, var(--bg-main));
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* ------------------------------
+       HOLOGRAPHIC HAZE LAYER
+       ------------------------------ */
+    .holo-haze {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 30% 40%, var(--theme-soft), transparent 60%),
+        radial-gradient(circle at 70% 60%, var(--theme-faint), transparent 70%);
+      mix-blend-mode: screen;
+      animation: hazeDrift 18s ease-in-out infinite alternate;
+      z-index: 1;
+    }
+
+    @keyframes hazeDrift {
+      0% { transform: translate(-20px, -10px) scale(1); opacity: 0.25; }
+      100% { transform: translate(20px, 10px) scale(1.2); opacity: 0.45; }
+    }
+
+    /* ------------------------------
+       RANDOM LIGHTNING GLITCH EFFECT
+       ------------------------------ */
+    .lightning {
+      position: fixed;
+      top: 0;
+      width: 2px;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0;
+      transform: translateX(-50%);
+      background: none;
+    }
+
+    .lightning::before {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: 0;
+      width: 2px;
+      height: 200%;
+      background: repeating-linear-gradient(
+        to bottom,
+        var(--theme-strong) 0px,
+        var(--theme-strong) 4px,
+        var(--theme-soft) 8px,
+        var(--theme-soft) 12px
+      );
+      filter:
+        drop-shadow(0 0 4px var(--theme-strong))
+        drop-shadow(2px 0 6px var(--theme-soft))
+        drop-shadow(-2px 0 6px var(--theme-soft));
+      animation: lightningJitter 0.25s steps(3) infinite;
+      transform: skewX(-12deg);
+    }
+
+    @keyframes lightningFlash {
+      0%   { opacity: 0; transform: scaleX(1); }
+      5%   { opacity: 1; transform: scaleX(1.4); }
+      7%   { opacity: 0.4; transform: scaleX(0.8); }
+      9%   { opacity: 1; transform: scaleX(1.2); }
+      12%  { opacity: 0; transform: scaleX(1); }
+      100% { opacity: 0; }
+    }
+
+    @keyframes lightningJitter {
+      0% { transform: translateX(0) skewX(-12deg); }
+      50% { transform: translateX(-1px) skewX(-10deg); }
+      100% { transform: translateX(1px) skewX(-14deg); }
+    }
+
+    /* ------------------------------
+       BACKGROUND GLOW + NOISE
+       ------------------------------ */
+    .bg-glow {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(
+        circle at 50% 20%,
+        var(--theme-soft),
+        rgba(0, 0, 0, 0.9)
+      );
+      animation: glowPulse 8s ease-in-out infinite alternate;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    @keyframes glowPulse {
+      0% { opacity: 0.25; transform: scale(1); }
+      100% { opacity: 0.45; transform: scale(1.15); }
+    }
+
+    .bg-noise {
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.4' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.12'/%3E%3C/svg%3E");
+      mix-blend-mode: soft-light;
+      animation: noiseShift 0.45s steps(4) infinite;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    @keyframes noiseShift {
+      0% { transform: translate(0,0); }
+      25% { transform: translate(-8px, 6px); }
+      50% { transform: translate(6px, -8px); }
+      75% { transform: translate(-4px, 4px); }
+      100% { transform: translate(0,0); }
+    }
+
+    .noise-overlay {
+      pointer-events: none;
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='2' stitchTiles='noStitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.12'/%3E%3C/svg%3E");
+      mix-blend-mode: soft-light;
+      z-index: 1;
+    }
+
+    /* ------------------------------
+       APP CONTAINER
+       ------------------------------ */
+    .app {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 1100px;
+      margin: 32px 16px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, var(--theme-faint), var(--theme-soft));
+      padding: 1px;
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.9), 0 0 40px var(--theme-glow);
+    }
+
+    .app-inner {
+      border-radius: 17px;
+      background: radial-gradient(circle at top left, #151515, var(--bg-panel));
+      padding: 20px 22px 24px;
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 20px;
+    }
+
+    /* ------------------------------
+       SIDEBAR
+       ------------------------------ */
+    .sidebar {
+      border-radius: 14px;
+      background: linear-gradient(180deg, #101010, #050505);
+      padding: 16px 14px;
+      border: 1px solid var(--theme-faint);
+      box-shadow: 0 0 18px rgba(0, 0, 0, 0.8);
+    }
+
+    .logo { position: relative; margin-bottom: 18px; }
+
+    .logo-text {
+      font-size: 1.3rem;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+      color: var(--theme-strong);
+      text-shadow:
+        0 0 6px var(--theme-glow),
+        0 0 14px var(--theme-soft);
+      animation: microGlitch 4s infinite;
+    }
+
+    @keyframes microGlitch {
+      0%, 97%, 100% { text-shadow: 0 0 6px var(--theme-glow); }
+      98% { text-shadow: 2px 0 var(--theme-strong), -2px 0 var(--theme-soft); }
+      99% { text-shadow: -2px 0 var(--theme-strong), 2px 0 var(--theme-soft); }
+    }
+
+    .logo-glitch {
+      position: absolute;
+      inset: 0;
+      color: var(--theme-strong);
+      mix-blend-mode: screen;
+      opacity: 0.0;
+      pointer-events: none;
+      animation: glitch 2.8s infinite;
+    }
+
+    @keyframes glitch {
+      0%, 90%, 100% { opacity: 0; transform: translate(0, 0); }
+      92% { opacity: 0.7; transform: translate(-2px, 1px); }
+      94% { opacity: 0.4; transform: translate(2px, -1px); }
+      96% { opacity: 0.8; transform: translate(-1px, 2px); }
+    }
+
+    .logo-sub {
+      font-size: 0.75rem;
+      letter-spacing: 0.18em;
+      color: var(--text-muted);
+    }
+
+    .signal-indicator {
+      margin-top: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+    }
+
+    .signal-bars { display: flex; gap: 3px; align-items: flex-end; }
+    .signal-bar { width: 4px; border-radius: 999px; background: #202020; }
+    .signal-bar.off { background: #151515; border: 1px solid #222; }
+
+    .sidebar-footer {
+      margin-top: 26px;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      border-top: 1px solid #181818;
+      padding-top: 10px;
+    }
+
+    .main {
+      border-radius: 14px;
+      background: linear-gradient(145deg, #090909, #050505);
+      border: 1px solid var(--theme-faint);
+      padding: 18px 18px 20px;
+      box-shadow: 0 0 18px rgba(0, 0, 0, 0.9), 0 0 26px var(--theme-soft);
+      position: relative;
+      overflow: hidden;
+      animation: panelPulse 9s ease-in-out infinite;
+    }
+
+    @keyframes panelPulse {
+      0% { box-shadow: 0 0 18px rgba(0,0,0,0.9), 0 0 26px var(--theme-soft); }
+      100% { box-shadow: 0 0 22px rgba(0,0,0,0.9), 0 0 34px var(--theme-glow); }
+    }
+
+    .scanline {
+      position: absolute;
+      left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--theme-med), transparent);
+      opacity: 0.2;
+      animation: scan 5s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes scan {
+      0% { top: -10%; }
+      100% { top: 110%; }
+    }
+
+    .main-header {
+      margin-bottom: 16px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .main-title {
+      font-size: 1.1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--theme-strong);
+    }
+
+    .main-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+      max-width: 420px;
+    }
+
+    .section-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      margin-top: 20px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 16px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .discover-card {
+      position: relative;
+      border-radius: 10px;
+      background: radial-gradient(circle at top, var(--theme-faint), rgba(0, 0, 0, 0.9));
+      border: 1px solid var(--theme-faint);
+      box-shadow: 0 0 14px rgba(0, 0, 0, 0.8);
+      padding: 14px;
+      overflow: hidden;
+    }
+
+    /* CARD SWEEP EFFECT */
+    .discover-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, var(--theme-soft), transparent);
+      opacity: 0;
+      pointer-events: none;
+      animation: cardSweep 6s ease-in-out infinite;
+    }
+
+    @keyframes cardSweep {
+      0% { opacity: 0; transform: translateX(-120%); }
+      10% { opacity: 0.4; }
+      40% { opacity: 0; transform: translateX(120%); }
+      100% { opacity: 0; }
+    }
+
+    .card-thumb {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      border: 1px solid var(--theme-soft);
+    }
+
+    .card-title {
+      font-size: 0.95rem;
+      margin-bottom: 4px;
+      color: var(--text-main);
+    }
+
+    .card-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Lightning glitch element -->
+  <div class="lightning" id="lightning"></div>
+
+  <!-- Animated background layers -->
+  <div class="bg-glow"></div>
+  <div class="bg-noise"></div>
+  <div class="holo-haze"></div>
+
+  <!-- Static noise overlay -->
+  <div class="noise-overlay"></div>
+
+  <div class="app">
+    <div class="app-inner">
+
+      <aside class="sidebar">
+        <div class="logo">
+          <div class="logo-text">zeroSignal</div>
+          <div class="logo-text logo-glitch">zeroSignal</div>
+          <div class="logo-sub">offline games platform</div>
+        </div>
+
+        <div class="signal-indicator">
+          <div class="signal-bars">
+            <div class="signal-bar off"></div>
+            <div class="signal-bar off"></div>
+            <div class="signal-bar off"></div>
+            <div class="signal-bar off"></div>
+          </div>
+          <span>offline gaming</span>
+        </div>
+
+        <div class="sidebar-footer">
+          zeroSignal is designed for offline gameplay.<br /><br />
+          Download once, play anywhere — even with zero signal.
+        </div>
+      </aside>
+
+      <main class="main">
+        <div class="scanline"></div>
+
+        <header class="main-header">
+          <div class="main-title">discover</div>
+          <p class="main-subtitle">Browse games designed for offline play.</p>
+        </header>
+
+        <div class="section-label">available games</div>
+
+        <section class="cards">
+          <article class="discover-card">
+            <img src="https://via.placeholder.com/400x200" class="card-thumb" />
+            <div class="card-title">Example Game</div>
+            <div class="card-desc">A placeholder description for the visual layout.</div>
+          </article>
+
+          <article class="discover-card">
+            <img src="https://via.placeholder.com/400x200" class="card-thumb" />
+            <div class="card-title">Another Game</div>
+            <div class="card-desc">This is just a static card for now.</div>
+          </article>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <script>
+    /* RANDOM LIGHTNING TRIGGER */
+    const lightning = document.getElementById("lightning");
+
+    function triggerLightning() {
+      const side = Math.random() < 0.5 ? "left" : "right";
+      lightning.style.left = side === "left" ? "0px" : "100%";
+      lightning.style.transform = side === "left" ? "translateX(0)" : "translateX(-100%)";
+
+      lightning.style.animation = "none";
+      void lightning.offsetWidth;
+      lightning.style.animation = "lightningFlash 0.25s linear";
+
+      const nextTime = 3000 + Math.random() * 4000;
+      setTimeout(triggerLightning, nextTime);
+    }
+
+    triggerLightning();
+  </script>
+
+</body>
+</html>
 
