@@ -1,2 +1,2 @@
 # zeroSignal
-Offline Gaming Platform
+An offline gaming platform
